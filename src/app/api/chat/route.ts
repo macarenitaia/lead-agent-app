@@ -209,8 +209,7 @@ async function captureContactInfo(data: any, leadId: string, tenantId: string): 
             .from('leads')
             .update({
                 name: data.name || undefined,
-                company_name: data.company_name || undefined,
-                job_title: data.job_title || undefined,
+                company: data.company_name || data.company || undefined,
                 email: data.email || undefined,
                 phone: data.phone || undefined,
                 status: data.email ? 'contacted' : 'new',
@@ -243,7 +242,7 @@ Lead Local ID: ${leadId}`,
             }).catch(e => console.error('DEBUG_ODOO_ERROR:', e));
         }
 
-        return { status: 'success', captured: Object.keys(data) };
+        return { status: 'success', captured: Object.keys(data), info: "Lead updated successfully in local database" };
     } catch (error) {
         console.error('Error capturing contact info:', error);
         return { status: 'error', message: 'Failed to capture info' };
