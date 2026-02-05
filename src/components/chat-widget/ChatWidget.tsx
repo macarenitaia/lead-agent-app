@@ -135,7 +135,7 @@ export default function ChatWidget({ tenantId: initialTenantId }: ChatWidgetProp
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setIsOpen(true)}
-                        className="fixed bottom-6 right-6 z-50 bg-[#22c55e] text-white rounded-full p-4 shadow-2xl hover:shadow-green-500/50 transition-all duration-300"
+                        className="fixed bottom-6 right-6 z-50 bg-[#22c55e] text-white rounded-full p-4 shadow-2xl hover:shadow-green-500/50 transition-all duration-300 md:bottom-8 md:right-8"
                     >
                         <MessageCircle className="w-6 h-6" />
                         <span className="absolute -top-1 -right-1 w-4 h-4 bg-white rounded-full border-2 border-[#22c55e] animate-pulse" />
@@ -148,8 +148,8 @@ export default function ChatWidget({ tenantId: initialTenantId }: ChatWidgetProp
                     <motion.div
                         initial={{ opacity: 0, y: 20, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 20, scale: 0.95 }}
-                        className="fixed bottom-6 right-6 z-50 w-[380px] h-[600px] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-200"
+                        className="fixed inset-0 z-[60] flex flex-col bg-white overflow-hidden 
+                                   md:inset-auto md:bottom-6 md:right-6 md:w-[380px] md:h-[600px] md:rounded-2xl md:shadow-2xl md:border md:border-gray-200"
                     >
                         {/* Header con estilo ingeniería */}
                         <div className="bg-[#0c1e35] text-white p-4 flex items-center justify-between relative overflow-hidden">
