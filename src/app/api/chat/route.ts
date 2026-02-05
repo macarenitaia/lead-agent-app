@@ -128,7 +128,7 @@ export async function POST(req: NextRequest) {
                             content: JSON.stringify(functionResult || { status: 'success' })
                         }
                     ],
-                    max_tokens: 50,
+                    max_tokens: 300,
                 });
                 responseContent = secondCompletion.choices[0].message.content;
             }
