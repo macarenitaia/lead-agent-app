@@ -205,7 +205,6 @@ async function handleFunctionCall(
  */
 async function captureContactInfo(data: any, leadId: string, tenantId: string): Promise<any> {
     try {
-        // Actualizar lead existente
         const { data: updatedLead, error } = await supabaseAdmin
             .from('leads')
             .update({
@@ -222,16 +221,7 @@ async function captureContactInfo(data: any, leadId: string, tenantId: string): 
 
         if (error) throw error;
 
-        // Sincronizar con Odoo si está configurado
-        console.log('DEBUG_ODOO: Verificando configuración...', {
-            isConfigured: odooClient.isConfigured(),
-            url: process.env.ODOO_URL ? 'PRESENT' : 'MISSING',
-            db: process.env.ODOO_DB ? 'PRESENT' : 'MISSING',
-            user: process.env.ODOO_USERNAME ? 'PRESENT' : 'MISSING'
-        });
-
         if (updatedLead && odooClient.isConfigured()) {
-            // Sincronización asíncrona para evitar timeout en Vercel
             odooClient.createLead({
                 name: updatedLead.name || 'Lead desde chat',
                 company: updatedLead.company_name,
