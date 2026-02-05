@@ -231,49 +231,34 @@ async function captureContactInfo(data: any, leadId: string, tenantId: string): 
         });
 
         if (updatedLead && odooClient.isConfigured()) {
-            try {
-                console.log('DEBUG_ODOO: Intentando crear lead...', {
-                    name: updatedLead.name,
-                    email: updatedLead.email
-                });
-
-                const odooLeadId = await odooClient.createLead({
-                    name: updatedLead.name || 'Lead desde chat',
-                    company: updatedLead.company_name,
-                    job_title: updatedLead.job_title,
-                    email: updatedLead.email,
-                    phone: updatedLead.phone,
-                    description: `Lead capturado desde chat web.
+            // Sincronización asíncrona para evitar timeout en Vercel
+            odooClient.createLead({
+                name: updatedLead.name || 'Lead desde chat',
+                company: updatedLead.company_name,
+                job_title: updatedLead.job_title,
+                email: updatedLead.email,
+                phone: updatedLead.phone,
+                description: `Lead capturado desde chat web.
 Empresa: ${updatedLead.company_name || 'N/A'}
 Cargo: ${updatedLead.job_title || 'N/A'}
-Tenant: ${tenantId}.
 Lead Local ID: ${leadId}`,
-                });
-
+            }).then(odooLeadId => {
                 if (odooLeadId) {
-                    console.log('DEBUG_ODOO: Lead creado con éxito ID:', odooLeadId);
-                    await supabaseAdmin
+                    supabaseAdmin
                         .from('leads')
-                        .update({
-                            external_ids: { odoo_id: odooLeadId }
-                        })
-                        .eq('id', leadId);
-                } else {
-                    console.error('DEBUG_ODOO: Odoo devolvió null (fallo en la creación)');
+                        .update({ external_ids: { odoo_id: odooLeadId } })
+                        .eq('id', leadId)
+                        .then(() => console.log('DEBUG_ODOO: Sync exitosa'));
                 }
-            } catch (odooError: any) {
-                console.error('DEBUG_ODOO_ERROR_DETALLE:', {
-                    mensaje: odooError.message,
-                    stack: odooError.stack,
-                    error: odooError
-                });
-            }
+            }).catch(e => console.error('DEBUG_ODOO_ERROR:', e));
         }
+
         return { status: 'success', captured: Object.keys(data) };
-    } catch (error) {
-        console.error('Error capturing contact info:', error);
-        return { status: 'error', message: 'Failed to capture info' };
     }
+    } catch (error) {
+    console.error('Error capturing contact info:', error);
+    return { status: 'error', message: 'Failed to capture info' };
+}
 }
 
 /**
