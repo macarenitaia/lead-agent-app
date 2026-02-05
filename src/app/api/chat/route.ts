@@ -254,11 +254,10 @@ Lead Local ID: ${leadId}`,
         }
 
         return { status: 'success', captured: Object.keys(data) };
-    }
     } catch (error) {
-    console.error('Error capturing contact info:', error);
-    return { status: 'error', message: 'Failed to capture info' };
-}
+        console.error('Error capturing contact info:', error);
+        return { status: 'error', message: 'Failed to capture info' };
+    }
 }
 
 /**
