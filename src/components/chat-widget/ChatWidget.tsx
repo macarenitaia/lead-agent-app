@@ -23,6 +23,7 @@ export default function ChatWidget({ tenantId: initialTenantId }: ChatWidgetProp
     const [inputValue, setInputValue] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [leadId, setLeadId] = useState<string | null>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
 
     // Forzar el tenantId de Real to Digital por defecto si no hay ninguno
     const REAL_TO_DIGITAL_ID = '7c3130fe-fcbd-4f48-9cd2-d6fd85a2e047';
@@ -111,6 +112,8 @@ export default function ChatWidget({ tenantId: initialTenantId }: ChatWidgetProp
             setMessages((prev) => [...prev, errorMessage]);
         } finally {
             setIsLoading(false);
+            // Devolver el foco al input inmediatamente
+            setTimeout(() => inputRef.current?.focus(), 10);
         }
     };
 
@@ -199,6 +202,7 @@ export default function ChatWidget({ tenantId: initialTenantId }: ChatWidgetProp
                                 <div className="p-4 bg-white border-t border-gray-200">
                                     <div className="flex gap-2">
                                         <input
+                                            ref={inputRef}
                                             type="text"
                                             value={inputValue}
                                             onChange={(e) => setInputValue(e.target.value)}
@@ -206,6 +210,7 @@ export default function ChatWidget({ tenantId: initialTenantId }: ChatWidgetProp
                                             placeholder="¿En qué puedo asesorarte?"
                                             disabled={isLoading}
                                             className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+                                            autoFocus
                                         />
                                         <button
                                             onClick={sendMessage}
