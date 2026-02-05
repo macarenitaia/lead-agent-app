@@ -138,8 +138,8 @@ export async function POST(req: NextRequest) {
             responseContent = '¡Entendido! ¿En qué más puedo ayudarte?';
         }
 
-        // 8. Guardar respuesta del asistente
-        await supabaseAdmin.from('messages').insert({
+        // 8. Guardar respuesta del asistente e iniciar sincronizaciones en paralelo (sin bloquear respuesta final)
+        const saveAssistantMsg = supabaseAdmin.from('messages').insert({
             lead_id: currentLeadId,
             role: 'assistant',
             content: responseContent,
@@ -147,12 +147,21 @@ export async function POST(req: NextRequest) {
             pnl_analysis: functionCall ? { function_called: functionCall.name } : null,
         });
 
-        // 9. Responder al cliente
-        return NextResponse.json({
+        // 9. Responder al cliente lo antes posible
+        // No esperamos a que se guarde el mensaje en la DB para responder, 
+        // ejecutamos la respuesta mientras la DB se actualiza.
+
+        // Creamos la promesa de respuesta pero no la bloqueamos con Odoo si podemos
+        const responseData = {
             message: responseContent,
             leadId: currentLeadId,
             functionCalled: functionCall?.name || null,
-        });
+        };
+
+        // Aseguramos que el mensaje se guarde antes de terminar la ejecución de la función
+        await saveAssistantMsg;
+
+        return NextResponse.json(responseData);
     } catch (error) {
         console.error('Chat API error:', error);
         return NextResponse.json(
@@ -209,14 +218,14 @@ async function captureContactInfo(data: any, leadId: string, tenantId: string): 
 
         // Sincronizar con Odoo si está configurado
         if (updatedLead && odooClient.isConfigured()) {
-            try {
-                const odooLeadId = await odooClient.createLead({
-                    name: updatedLead.name || 'Lead desde chat',
-                    email: updatedLead.email,
-                    phone: updatedLead.phone,
-                    description: `Lead capturado desde chat web. Tenant: ${tenantId}. Lead ID: ${leadId}`,
-                });
-
+            // FIRE AND FORGET (en la medida de lo posible en serverless)
+            // No usamos await aquí para no bloquear la respuesta del chat
+            odooClient.createLead({
+                name: updatedLead.name || 'Lead desde chat',
+                email: updatedLead.email,
+                phone: updatedLead.phone,
+                description: `Lead capturado desde chat web. Tenant: ${tenantId}. Lead ID: ${leadId}`,
+            }).then(async (odooLeadId) => {
                 if (odooLeadId) {
                     await supabaseAdmin
                         .from('leads')
@@ -225,9 +234,7 @@ async function captureContactInfo(data: any, leadId: string, tenantId: string): 
                         })
                         .eq('id', leadId);
                 }
-            } catch (odooError) {
-                console.error('Error syncing with Odoo:', odooError);
-            }
+            }).catch(e => console.error('Delayed Odoo sync error:', e));
         }
         return { status: 'success', captured: Object.keys(data) };
     } catch (error) {
