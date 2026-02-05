@@ -41,7 +41,7 @@ class OdooClient {
         console.log(`ODOO_AUTH: Intentando autenticar en ${this.url} (DB: ${this.db}, User: ${this.username})`);
 
         return new Promise((resolve, reject) => {
-            const commonUrl = `${this.url}/xmlrpc/2/common`.replace(/([^:]\/)\/+/g, "$1"); // Evitar dobles barras
+            const commonUrl = new URL('/xmlrpc/2/common', this.url).toString();
             const common = xmlrpc.createSecureClient(commonUrl);
 
             common.methodCall('authenticate', [this.db, this.username, this.password, {}], (error: any, value: any) => {
@@ -66,7 +66,7 @@ class OdooClient {
     private async execute_kw(model: string, method: string, args: any[], kwargs: any = {}): Promise<any> {
         const uid = await this.authenticate();
         return new Promise((resolve, reject) => {
-            const objectUrl = `${this.url}/xmlrpc/2/object`.replace(/([^:]\/)\/+/g, "$1");
+            const objectUrl = new URL('/xmlrpc/2/object', this.url).toString();
             const models = xmlrpc.createSecureClient(objectUrl);
 
             console.log(`ODOO_EXECUTE: ${model}.${method} para UID ${uid}`);
@@ -95,7 +95,7 @@ class OdooClient {
                 email_from: data.email,
                 phone: data.phone,
                 description: data.description,
-                type: 'opportunity', // Cambiado de 'lead' a 'opportunity' para Odoo en español
+                type: 'lead', // Cambiado a 'lead' para máxima compatibilidad inicial
             }]);
 
             console.log('Odoo Lead created successfully:', leadId);
