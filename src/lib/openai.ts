@@ -11,4 +11,4 @@ export const openai = new OpenAI({
 });
 
 export const EMBEDDING_MODEL = 'text-embedding-3-small';
-export const CHAT_MODEL = process.env.OPENAI_MODEL || 'gpt-4-turbo-preview';
+export const CHAT_MODEL = process.env.OPENAI_MODEL || 'gpt-4o-mini';
