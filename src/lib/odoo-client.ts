@@ -38,46 +38,55 @@ class OdooClient {
     private async authenticate(): Promise<number> {
         if (this.uid) return this.uid;
 
-        console.log(`ODOO_AUTH: Intentando autenticar en ${this.url} (DB: ${this.db}, User: ${this.username})`);
+        console.log(`ODOO_AUTH: Intentando autenticar en ${this.url}`);
 
         return new Promise((resolve, reject) => {
-            const commonUrl = new URL('/xmlrpc/2/common', this.url).toString();
-            const common = xmlrpc.createSecureClient(commonUrl);
+            try {
+                const urlObj = new URL(this.url);
+                const common = xmlrpc.createSecureClient({
+                    host: urlObj.hostname,
+                    port: 443,
+                    path: '/xmlrpc/2/common'
+                });
 
-            common.methodCall('authenticate', [this.db, this.username, this.password, {}], (error: any, value: any) => {
-                if (error) {
-                    console.error('ODOO_AUTH_ERROR (Network/XML-RPC):', error);
-                    return reject(error);
-                }
-                if (!value) {
-                    console.error('ODOO_AUTH_ERROR: Credenciales inválidas o DB no encontrada');
-                    return reject(new Error('Authentication failed: Invalid credentials'));
-                }
-                console.log('ODOO_AUTH_SUCCESS: Login correcto, UID:', value);
-                this.uid = value;
-                resolve(value);
-            });
+                common.methodCall('authenticate', [this.db, this.username, this.password, {}], (error: any, value: any) => {
+                    if (error) {
+                        console.error('ODOO_AUTH_ERROR:', error);
+                        return reject(error);
+                    }
+                    if (!value) {
+                        return reject(new Error('Authentication failed'));
+                    }
+                    this.uid = value;
+                    resolve(value);
+                });
+            } catch (e) {
+                reject(e);
+            }
         });
     }
 
-    /**
-     * Ejecuta un método en Odoo (execute_kw)
-     */
     private async execute_kw(model: string, method: string, args: any[], kwargs: any = {}): Promise<any> {
         const uid = await this.authenticate();
         return new Promise((resolve, reject) => {
-            const objectUrl = new URL('/xmlrpc/2/object', this.url).toString();
-            const models = xmlrpc.createSecureClient(objectUrl);
+            try {
+                const urlObj = new URL(this.url);
+                const models = xmlrpc.createSecureClient({
+                    host: urlObj.hostname,
+                    port: 443,
+                    path: '/xmlrpc/2/object'
+                });
 
-            console.log(`ODOO_EXECUTE: ${model}.${method} para UID ${uid}`);
-
-            models.methodCall('execute_kw', [this.db, uid, this.password, model, method, args, kwargs], (error: any, value: any) => {
-                if (error) {
-                    console.error(`ODOO_EXECUTE_ERROR en ${model}.${method}:`, error);
-                    return reject(error);
-                }
-                resolve(value);
-            });
+                models.methodCall('execute_kw', [this.db, uid, this.password, model, method, args, kwargs], (error: any, value: any) => {
+                    if (error) {
+                        console.error(`ODOO_EXEC_ERROR (${model}.${method}):`, error);
+                        return reject(error);
+                    }
+                    resolve(value);
+                });
+            } catch (e) {
+                reject(e);
+            }
         });
     }
 

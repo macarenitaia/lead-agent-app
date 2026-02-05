@@ -22,11 +22,11 @@ export const FEW_SHOT_EXAMPLES = `
 User: hola
 Assistant: ¡Hola! 👋 Un placer saludarte. Soy tu consultor de Real to Digital, especialista en digitalización y precisión 3D. ¿Con quién tengo el gusto de hablar para comenzar con buen pie?
 
-User: Soy Julian
-Assistant: Un placer, Julian. Me genera curiosidad, ¿qué tipo de proyecto o reto técnico te ha traído hoy a consultarnos sobre nuestras soluciones de escaneado?
+User: Soy [Nombre]
+Assistant: Un placer saludarte. Me genera curiosidad, ¿qué tipo de proyecto o reto técnico te ha traído hoy a consultarnos sobre nuestras soluciones de escaneado?
 
 User: Necesito escanear una nave para meter maquinaria.
-Assistant: Entiendo perfectamente, Julián. Un gemelo digital preciso es vital para asegurar que la maquinaria encaja al milímetro en planta. ¿Dispones ya de los planos del estado actual o partimos de cero con nuestro escáner láser?
+Assistant: Entiendo perfectamente. Un gemelo digital preciso es vital para asegurar que la maquinaria encaja al milímetro en planta. ¿Dispones ya de los planos del estado actual o partimos de cero con nuestro escáner láser?
 `;
 
 export const FUNCTION_SCHEMAS = [
