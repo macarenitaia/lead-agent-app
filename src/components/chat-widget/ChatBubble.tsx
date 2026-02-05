@@ -27,20 +27,20 @@ export default function ChatBubble({ message }: ChatBubbleProps) {
         >
             {/* Avatar */}
             <div
-                className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${isUser
-                        ? 'bg-gradient-to-br from-indigo-500 to-purple-500 text-white'
-                        : 'bg-gradient-to-br from-gray-100 to-gray-200 text-gray-700'
+                className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center border ${isUser
+                    ? 'bg-[#0c1e35] text-[#22c55e] border-[#22c55e]/30'
+                    : 'bg-white text-slate-700 border-slate-200'
                     }`}
             >
-                {isUser ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
+                {isUser ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4 text-[#22c55e]" />}
             </div>
 
             {/* Bubble */}
             <div className={`flex flex-col max-w-[75%] ${isUser ? 'items-end' : 'items-start'}`}>
                 <div
-                    className={`rounded-2xl px-4 py-2 ${isUser
-                            ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-tr-sm'
-                            : 'bg-white text-gray-800 shadow-sm border border-gray-200 rounded-tl-sm'
+                    className={`rounded-2xl px-4 py-2 text-sm shadow-sm ${isUser
+                        ? 'bg-[#0c1e35] text-white rounded-tr-sm border border-[#22c55e]/20'
+                        : 'bg-white text-slate-800 border border-slate-200 rounded-tl-sm'
                         }`}
                 >
                     {isUser ? (
