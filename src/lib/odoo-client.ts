@@ -82,7 +82,7 @@ class OdooClient {
                 email_from: data.email,
                 phone: data.phone,
                 description: data.description,
-                type: 'lead',
+                type: 'opportunity', // Cambiado de 'lead' a 'opportunity' para Odoo en español
             }]);
 
             console.log('Odoo Lead created successfully:', leadId);
