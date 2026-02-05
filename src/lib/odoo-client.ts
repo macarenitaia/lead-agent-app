@@ -38,16 +38,22 @@ class OdooClient {
     private async authenticate(): Promise<number> {
         if (this.uid) return this.uid;
 
+        console.log(`ODOO_AUTH: Intentando autenticar en ${this.url} (DB: ${this.db}, User: ${this.username})`);
+
         return new Promise((resolve, reject) => {
-            const common = xmlrpc.createSecureClient(`${this.url}/xmlrpc/2/common`);
+            const commonUrl = `${this.url}/xmlrpc/2/common`.replace(/([^:]\/)\/+/g, "$1"); // Evitar dobles barras
+            const common = xmlrpc.createSecureClient(commonUrl);
+
             common.methodCall('authenticate', [this.db, this.username, this.password, {}], (error: any, value: any) => {
                 if (error) {
-                    console.error('Odoo Auth Error:', error);
+                    console.error('ODOO_AUTH_ERROR (Network/XML-RPC):', error);
                     return reject(error);
                 }
                 if (!value) {
+                    console.error('ODOO_AUTH_ERROR: Credenciales inválidas o DB no encontrada');
                     return reject(new Error('Authentication failed: Invalid credentials'));
                 }
+                console.log('ODOO_AUTH_SUCCESS: Login correcto, UID:', value);
                 this.uid = value;
                 resolve(value);
             });
@@ -60,10 +66,14 @@ class OdooClient {
     private async execute_kw(model: string, method: string, args: any[], kwargs: any = {}): Promise<any> {
         const uid = await this.authenticate();
         return new Promise((resolve, reject) => {
-            const models = xmlrpc.createSecureClient(`${this.url}/xmlrpc/2/object`);
+            const objectUrl = `${this.url}/xmlrpc/2/object`.replace(/([^:]\/)\/+/g, "$1");
+            const models = xmlrpc.createSecureClient(objectUrl);
+
+            console.log(`ODOO_EXECUTE: ${model}.${method} para UID ${uid}`);
+
             models.methodCall('execute_kw', [this.db, uid, this.password, model, method, args, kwargs], (error: any, value: any) => {
                 if (error) {
-                    console.error(`Odoo execute_kw Error (${model}.${method}):`, error);
+                    console.error(`ODOO_EXECUTE_ERROR en ${model}.${method}:`, error);
                     return reject(error);
                 }
                 resolve(value);
