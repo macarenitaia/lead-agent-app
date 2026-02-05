@@ -38,16 +38,19 @@ export default function ChatBubble({ message }: ChatBubbleProps) {
             {/* Bubble */}
             <div className={`flex flex-col max-w-[80%] ${isUser ? 'items-end' : 'items-start'}`}>
                 <div
-                    className={`rounded-2xl px-4 py-2.5 text-sm shadow-md ${isUser
-                        ? 'bg-[#48da40] text-black font-medium rounded-tr-sm border border-[#3ecb37]/30'
-                        : 'bg-white text-[#0c1e35] border border-slate-100 rounded-tl-sm'
+                    className={`rounded-2xl px-4 py-2.5 text-sm shadow-md border ${isUser
+                        ? 'bg-[#48da40] text-[#0c1e35] font-bold border-[#3ecb37]/30'
+                        : 'bg-white text-black border-slate-100 rounded-tl-sm'
                         }`}
                 >
                     {isUser ? (
-                        <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                        <p className="text-sm whitespace-pre-wrap text-[#0c1e35]">{message.content}</p>
                     ) : (
-                        <div className="prose prose-sm max-w-none prose-p:my-1 prose-headings:my-2">
-                            <ReactMarkdown>{message.content}</ReactMarkdown>
+                        <div className="prose prose-sm max-w-none prose-p:my-1 prose-headings:my-2 !text-black">
+                            <ReactMarkdown components={{
+                                p: ({ node, ...props }) => <p className="!text-black mb-1" {...props} />,
+                                strong: ({ node, ...props }) => <strong className="!text-black font-bold" {...props} />,
+                            }}>{message.content}</ReactMarkdown>
                         </div>
                     )}
                 </div>
