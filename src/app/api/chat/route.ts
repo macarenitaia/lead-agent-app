@@ -220,25 +220,32 @@ async function captureContactInfo(data: any, leadId: string, tenantId: string): 
         if (error) throw error;
 
         if (updatedLead && odooClient.isConfigured()) {
-            odooClient.createLead({
-                name: updatedLead.name || 'Lead desde chat',
-                company: updatedLead.company_name,
-                job_title: updatedLead.job_title,
-                email: updatedLead.email,
-                phone: updatedLead.phone,
-                description: `Lead capturado desde chat web.
-Empresa: ${updatedLead.company_name || 'N/A'}
-Cargo: ${updatedLead.job_title || 'N/A'}
+            try {
+                console.log('DEBUG_ODOO: Iniciando creación de lead/opportunity...');
+                const odooLeadId = await odooClient.createLead({
+                    name: updatedLead.name || 'Lead desde chat',
+                    company: updatedLead.company,
+                    email: updatedLead.email,
+                    phone: updatedLead.phone,
+                    description: `Lead capturado desde chat web.
 Lead Local ID: ${leadId}`,
-            }).then(odooLeadId => {
+                });
+
                 if (odooLeadId) {
-                    supabaseAdmin
+                    await supabaseAdmin
                         .from('leads')
-                        .update({ external_ids: { odoo_id: odooLeadId } })
-                        .eq('id', leadId)
-                        .then(() => console.log('DEBUG_ODOO: Sync exitosa'));
+                        .update({
+                            external_ids: { odoo_id: odooLeadId },
+                            odoo_synced: true
+                        })
+                        .eq('id', leadId);
+                    console.log('DEBUG_ODOO: Sync exitosa:', odooLeadId);
+                } else {
+                    console.error('DEBUG_ODOO: Odoo no devolvió ID');
                 }
-            }).catch(e => console.error('DEBUG_ODOO_ERROR:', e));
+            } catch (e) {
+                console.error('DEBUG_ODOO_ERROR:', e);
+            }
         }
 
         return { status: 'success', captured: Object.keys(data), info: "Lead updated successfully in local database" };

@@ -104,7 +104,7 @@ class OdooClient {
                 email_from: data.email,
                 phone: data.phone,
                 description: data.description,
-                type: 'lead', // Cambiado a 'lead' para máxima compatibilidad inicial
+                type: 'opportunity', // Cambiado a 'opportunity' para que aparezca directamente en el flujo de ventas
             }]);
 
             console.log('Odoo Lead created successfully:', leadId);
