@@ -223,18 +223,18 @@ async function captureContactInfo(data: any, leadId: string, tenantId: string): 
 
         if (updatedLead && odooClient.isConfigured()) {
             try {
-                console.log('DEBUG_ODOO: Iniciando creación de lead/opportunity...');
+                console.log('DEBUG_CHAT_API: Iniciando sincronización de Odoo para Lead ID:', leadId);
                 const odooLeadId = await odooClient.createLead({
                     name: updatedLead.name || 'Lead desde chat',
                     company: updatedLead.company,
                     job_title: updatedLead.job_title,
                     email: updatedLead.email,
                     phone: updatedLead.phone,
-                    description: `Lead capturado desde chat web.
-Lead Local ID: ${leadId}`,
+                    description: `Lead capturado desde chat web.\nID Local: ${leadId}\nFecha: ${new Date().toISOString()}`,
                 });
 
                 if (odooLeadId) {
+                    console.log('DEBUG_CHAT_API: Sincronización exitosa. Odoo ID:', odooLeadId);
                     await supabaseAdmin
                         .from('leads')
                         .update({
@@ -242,13 +242,17 @@ Lead Local ID: ${leadId}`,
                             odoo_synced: true
                         })
                         .eq('id', leadId);
-                    console.log('DEBUG_ODOO: Sync exitosa:', odooLeadId);
                 } else {
-                    console.error('DEBUG_ODOO: Odoo no devolvió ID');
+                    console.error('DEBUG_CHAT_API: Odoo no devolvió un ID de Lead.');
                 }
-            } catch (e) {
-                console.error('DEBUG_ODOO_ERROR:', e);
+            } catch (e: any) {
+                console.error('DEBUG_CHAT_API_ODOO_EXCEPTION:', {
+                    message: e.message,
+                    stack: e.stack
+                });
             }
+        } else {
+            console.log('DEBUG_CHAT_API: Odoo no sincronizado. Configurado:', odooClient.isConfigured(), 'Lead:', !!updatedLead);
         }
 
         return { status: 'success', captured: Object.keys(data), info: "Lead updated successfully in local database" };

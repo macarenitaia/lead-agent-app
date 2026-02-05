@@ -94,23 +94,35 @@ class OdooClient {
      * Crea un lead en CRM
      */
     async createLead(data: OdooLeadData): Promise<number | null> {
-        if (!this.isConfigured()) return null;
+        console.log('ODOO_CLIENT: Intentando crear lead con data:', JSON.stringify(data));
+        if (!this.isConfigured()) {
+            console.error('ODOO_CLIENT_ERROR: No configurado. Faltan variables de entorno.');
+            return null;
+        }
 
         try {
-            const leadId = await this.execute_kw('crm.lead', 'create', [{
+            const params = {
                 name: data.name,
                 partner_name: data.company,
                 function: data.job_title,
                 email_from: data.email,
                 phone: data.phone,
                 description: data.description,
-                type: 'opportunity', // Cambiado a 'opportunity' para que aparezca directamente en el flujo de ventas
-            }]);
+                type: 'opportunity',
+            };
+            console.log('ODOO_CLIENT: Llamando a execute_kw crm.lead.create con:', JSON.stringify(params));
 
-            console.log('Odoo Lead created successfully:', leadId);
+            const leadId = await this.execute_kw('crm.lead', 'create', [params]);
+
+            console.log('ODOO_CLIENT: Lead creado exitosamente. ID:', leadId);
             return leadId;
-        } catch (error) {
-            console.error('Failed to create Odoo lead:', error);
+        } catch (error: any) {
+            console.error('ODOO_CLIENT_CREATE_FAILED:', {
+                message: error.message,
+                code: error.code,
+                faultCode: error.faultCode,
+                faultString: error.faultString
+            });
             return null;
         }
     }
