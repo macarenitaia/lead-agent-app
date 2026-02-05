@@ -205,36 +205,56 @@ async function handleFunctionCall(
  */
 async function captureContactInfo(data: any, leadId: string, tenantId: string): Promise<any> {
     try {
-        const { data: updatedLead, error } = await supabaseAdmin
-            .from('leads')
-            .update({
-                name: data.name || undefined,
-                company: data.company_name || data.company || undefined,
-                job_title: data.job_title || data.role || undefined,
-                email: data.email || undefined,
-                phone: data.phone || undefined,
-                status: data.email ? 'contacted' : 'new',
-            })
-            .eq('id', leadId)
-            .select()
-            .single();
+        console.log('DEBUG_CHAT_API: Iniciando captura de contacto. Data recibida:', JSON.stringify(data));
 
-        if (error) throw error;
+        // 1. Intentar actualizar Supabase (opcional, no bloquea Odoo)
+        try {
+            const { error: sbError } = await supabaseAdmin
+                .from('leads')
+                .update({
+                    name: data.name || undefined,
+                    // Intentamos company/job_title pero sin que rompa si no existen
+                    ...(data.company_name || data.company ? { company: data.company_name || data.company } : {}),
+                    ...(data.job_title || data.role ? { job_title: data.job_title || data.role } : {}),
+                    email: data.email || undefined,
+                    phone: data.phone || undefined,
+                    status: data.email ? 'contacted' : 'new',
+                })
+                .eq('id', leadId);
 
-        if (updatedLead && odooClient.isConfigured()) {
+            if (sbError) {
+                console.warn('DEBUG_CHAT_API: Error al actualizar Supabase (posible esquema antiguo):', sbError.message);
+                // Si falla por columnas inexistentes, intentamos un update simplificado sin ellas
+                await supabaseAdmin
+                    .from('leads')
+                    .update({
+                        name: data.name || undefined,
+                        email: data.email || undefined,
+                        phone: data.phone || undefined,
+                        status: data.email ? 'contacted' : 'new',
+                    })
+                    .eq('id', leadId);
+            }
+        } catch (sbEx) {
+            console.warn('DEBUG_CHAT_API: Excepción en Supabase (ignorada para proceder a Odoo):', sbEx);
+        }
+
+        // 2. Sincronizar con Odoo (PRIORIDAD)
+        if (odooClient.isConfigured()) {
             try {
-                console.log('DEBUG_CHAT_API: Iniciando sincronización de Odoo para Lead ID:', leadId);
+                console.log('DEBUG_CHAT_API: Sincronizando directamente con Odoo...');
                 const odooLeadId = await odooClient.createLead({
-                    name: updatedLead.name || 'Lead desde chat',
-                    company: updatedLead.company,
-                    job_title: updatedLead.job_title,
-                    email: updatedLead.email,
-                    phone: updatedLead.phone,
+                    name: data.name || 'Lead desde chat',
+                    company: data.company_name || data.company,
+                    job_title: data.job_title || data.role,
+                    email: data.email,
+                    phone: data.phone,
                     description: `Lead capturado desde chat web.\nID Local: ${leadId}\nFecha: ${new Date().toISOString()}`,
                 });
 
                 if (odooLeadId) {
-                    console.log('DEBUG_CHAT_API: Sincronización exitosa. Odoo ID:', odooLeadId);
+                    console.log('DEBUG_CHAT_API: Odoo Sync EXITOSA. ID:', odooLeadId);
+                    // Intentamos guardar el ID de Odoo de vuelta en Supabase si se puede
                     await supabaseAdmin
                         .from('leads')
                         .update({
@@ -243,22 +263,21 @@ async function captureContactInfo(data: any, leadId: string, tenantId: string): 
                         })
                         .eq('id', leadId);
                 } else {
-                    console.error('DEBUG_CHAT_API: Odoo no devolvió un ID de Lead.');
+                    console.error('DEBUG_CHAT_API: Odoo regresó null ID.');
                 }
-            } catch (e: any) {
-                console.error('DEBUG_CHAT_API_ODOO_EXCEPTION:', {
-                    message: e.message,
-                    stack: e.stack
-                });
+            } catch (odooEx: any) {
+                console.error('DEBUG_CHAT_API: Error crítico en sincronización Odoo:', odooEx.message);
             }
-        } else {
-            console.log('DEBUG_CHAT_API: Odoo no sincronizado. Configurado:', odooClient.isConfigured(), 'Lead:', !!updatedLead);
         }
 
-        return { status: 'success', captured: Object.keys(data), info: "Lead updated successfully in local database" };
-    } catch (error) {
-        console.error('Error capturing contact info:', error);
-        return { status: 'error', message: 'Failed to capture info' };
+        return {
+            status: 'success',
+            captured: Object.keys(data),
+            info: "Lead processed. Odoo sync attempted."
+        };
+    } catch (error: any) {
+        console.error('DEBUG_CHAT_API: Error fatal en captureContactInfo:', error);
+        return { status: 'error', message: error.message };
     }
 }
 
