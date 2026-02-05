@@ -212,7 +212,7 @@ async function captureContactInfo(data: any, leadId: string, tenantId: string): 
                 company: data.company_name || data.company || undefined,
                 email: data.email || undefined,
                 phone: data.phone || undefined,
-                status: data.email ? 'contacted' : 'new',
+                stage: data.email ? 'contacted' : 'new',
             })
             .eq('id', leadId)
             .select()
