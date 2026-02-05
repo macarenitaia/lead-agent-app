@@ -203,15 +203,15 @@ Lee los mensajes del script, te indicará exactamente qué está mal:
 # ============================================
 # SUPABASE CONFIGURATION
 # ============================================
-NEXT_PUBLIC_SUPABASE_URL=https://rsbgkjkmvogbptpkklbm.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+NEXT_PUBLIC_SUPABASE_URL=TU_URL
+NEXT_PUBLIC_SUPABASE_ANON_KEY=TU_ANON_KEY
+SUPABASE_SERVICE_ROLE_KEY=TU_SERVICE_ROLE_KEY
 
 # ============================================
 # OPENAI CONFIGURATION
 # ============================================
-OPENAI_API_KEY=sk-proj-abc123...
-OPENAI_MODEL=gpt-4-turbo-preview
+OPENAI_API_KEY=TU_OPENAI_API_KEY
+OPENAI_MODEL=gpt-4o-mini
 
 # ============================================
 # ODOO CONFIGURATION

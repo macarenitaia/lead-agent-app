@@ -5,6 +5,7 @@ export interface OdooLeadData {
     email?: string;
     phone?: string;
     company?: string;
+    job_title?: string;
     description?: string;
 }
 
@@ -79,6 +80,8 @@ class OdooClient {
         try {
             const leadId = await this.execute_kw('crm.lead', 'create', [{
                 name: data.name,
+                partner_name: data.company,
+                function: data.job_title,
                 email_from: data.email,
                 phone: data.phone,
                 description: data.description,

@@ -210,6 +210,8 @@ async function captureContactInfo(data: any, leadId: string, tenantId: string): 
             .from('leads')
             .update({
                 name: data.name || undefined,
+                company_name: data.company_name || undefined,
+                job_title: data.job_title || undefined,
                 email: data.email || undefined,
                 phone: data.phone || undefined,
                 status: data.email ? 'contacted' : 'new',
@@ -222,14 +224,21 @@ async function captureContactInfo(data: any, leadId: string, tenantId: string): 
 
         // Sincronizar con Odoo si está configurado
         if (updatedLead && odooClient.isConfigured()) {
-            // FIRE AND FORGET (en la medida de lo posible en serverless)
-            // No usamos await aquí para no bloquear la respuesta del chat
-            odooClient.createLead({
-                name: updatedLead.name || 'Lead desde chat',
-                email: updatedLead.email,
-                phone: updatedLead.phone,
-                description: `Lead capturado desde chat web. Tenant: ${tenantId}. Lead ID: ${leadId}`,
-            }).then(async (odooLeadId) => {
+            try {
+                // Volvemos a usar await para asegurar que Vercel no mate el proceso antes de terminar
+                const odooLeadId = await odooClient.createLead({
+                    name: updatedLead.name || 'Lead desde chat',
+                    company: updatedLead.company_name,
+                    job_title: updatedLead.job_title,
+                    email: updatedLead.email,
+                    phone: updatedLead.phone,
+                    description: `Lead capturado desde chat web.
+Empresa: ${updatedLead.company_name || 'N/A'}
+Cargo: ${updatedLead.job_title || 'N/A'}
+Tenant: ${tenantId}.
+Lead Local ID: ${leadId}`,
+                });
+
                 if (odooLeadId) {
                     await supabaseAdmin
                         .from('leads')
@@ -238,7 +247,9 @@ async function captureContactInfo(data: any, leadId: string, tenantId: string): 
                         })
                         .eq('id', leadId);
                 }
-            }).catch(e => console.error('Delayed Odoo sync error:', e));
+            } catch (odooError) {
+                console.error('Error syncing with Odoo:', odooError);
+            }
         }
         return { status: 'success', captured: Object.keys(data) };
     } catch (error) {

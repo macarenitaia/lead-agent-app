@@ -50,7 +50,7 @@ export default function ChatWidget({ tenantId: initialTenantId }: ChatWidgetProp
             const welcomeMessage: Message = {
                 id: 'welcome',
                 role: 'assistant',
-                content: '¡Hola! 👋 Soy tu consultor de Real to Digital, especialista en Escaneo 3D. ¿Con quién tengo el gusto de hablar?',
+                content: '¡Hola! 👋 Soy tu consultor de Real to Digital, especialista en Escaneo 3D y servicios relacionados ¿Con quién tengo el gusto de hablar?',
                 timestamp: new Date(),
             };
             setMessages([welcomeMessage]);

@@ -39,7 +39,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=tu_anon_key
 SUPABASE_SERVICE_ROLE_KEY=tu_service_role_key
 
 # OpenAI
-OPENAI_API_KEY=sk-proj-...
+OPENAI_API_KEY=TU_OPENAI_API_KEY
 ```
 
 ### Paso 3: Ejecuta el Diagnóstico
