@@ -1,118 +1,90 @@
 import ChatWidget from '@/components/chat-widget/ChatWidget';
+import { Search } from 'lucide-react';
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-[#061224] text-white relative overflow-hidden">
-      {/* Patrón de Rejilla de Fondo */}
-      <div className="absolute inset-0 opacity-10 pointer-events-none"
-        style={{
-          backgroundImage: 'linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px)',
-          backgroundSize: '40px 40px'
-        }}>
-      </div>
-
-      {/* Hero Section */}
-      <main className="container mx-auto px-4 py-20 relative z-10">
-        <div className="max-w-5xl mx-auto text-center">
-          {/* Header */}
-          <div className="mb-16">
-            <div className="inline-block px-4 py-1.5 mb-6 rounded-full bg-[#22c55e]/10 border border-[#22c55e]/20 text-[#22c55e] text-sm font-bold tracking-widest uppercase">
-              Solución Técnica de Vanguardia
-            </div>
-            <h1 className="text-6xl md:text-7xl font-bold mb-8 tracking-tighter text-white">
-              Agente IA de <span className="text-[#22c55e]">Captura de Leads</span>
-            </h1>
-            <p className="text-xl md:text-2xl text-slate-400 mb-8 max-w-3xl mx-auto">
-              Conversaciones técnicas de alta precisión que transforman visitantes en oportunidades estratégicas para Odoo CRM.
-            </p>
-          </div>
-
-          {/* Features Grid */}
-          <div className="grid md:grid-cols-3 gap-6 mb-20">
-            {[
-              {
-                icon: '🧠',
-                title: 'IA con PNL Avanzado',
-                description: 'Algoritmos diseñados para la captura empática y validación técnica de requerimientos.'
-              },
-              {
-                icon: '🏢',
-                title: 'Ecosistema Odoo',
-                description: 'Sincronización bidireccional inmediata para una gestión de CRM sin fricciones.'
-              },
-              {
-                icon: '🛰️',
-                title: 'RAG de Ingeniería',
-                description: 'Acceso instantáneo a su base de conocimiento técnica (BIM, Escaneo, Metrología).'
-              }
-            ].map((feature, index) => (
-              <div
-                key={index}
-                className="group rounded-2xl p-8 bg-[#0c1e35] border border-slate-800 shadow-2xl hover:border-[#22c55e]/50 transition-all duration-300 relative overflow-hidden text-left"
-              >
-                <div className="absolute top-0 right-0 w-24 h-24 bg-[#22c55e]/5 rounded-bl-full group-hover:bg-[#22c55e]/10 transition-colors"></div>
-                <div className="text-4xl mb-6">{feature.icon}</div>
-                <h3 className="text-xl font-bold mb-3 text-white group-hover:text-[#22c55e] transition-colors">{feature.title}</h3>
-                <p className="text-slate-400 text-sm leading-relaxed">{feature.description}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* Demo Section */}
-          <div className="bg-[#0c1e35] rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.5)] p-1 md:p-12 border border-slate-800 relative overflow-hidden">
-            {/* Adorno decorativo */}
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#22c55e] to-transparent opacity-50"></div>
-
-            <div className="p-8 md:p-0">
-              <h2 className="text-4xl font-bold mb-6 text-white tracking-tight">
-                Validación de <span className="text-[#22c55e]">Asesoría Virtual</span>
-              </h2>
-              <p className="text-lg text-slate-400 mb-10 max-w-2xl mx-auto">
-                Interactúe con nuestro consultor digital especializado en Escaneo 3D y servicios BIM para experimentar el flujo de cualificación técnica.
-              </p>
-
-              <div className="grid md:grid-cols-2 gap-8 text-left max-w-4xl mx-auto">
-                <div className="bg-[#061224] rounded-2xl p-8 border border-slate-800 relative group">
-                  <div className="absolute -top-3 -right-3 w-12 h-12 bg-[#22c55e] rounded-xl flex items-center justify-center shadow-[0_0_15px_#22c55e66] transition-transform group-hover:scale-110">
-                    <span className="text-white font-black">AI</span>
-                  </div>
-                  <h3 className="font-bold text-white text-xl mb-4">Capacidades Críticas:</h3>
-                  <ul className="space-y-4">
-                    {[
-                      'Extracción de metadatos corporativos',
-                      'Cualificación por nivel de detalle (LOD)',
-                      'Agendamiento inteligente de consultoría',
-                      'Normalización de datos para ERP'
-                    ].map((item, i) => (
-                      <li key={i} className="flex items-center gap-3">
-                        <div className="w-1.5 h-1.5 bg-[#22c55e] rounded-full shadow-[0_0_5px_#22c55e]"></div>
-                        <span className="text-slate-300 text-sm font-medium">{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="flex flex-col justify-center items-center md:items-start space-y-6">
-                  <div className="p-6 bg-[#22c55e]/5 rounded-2xl border border-[#22c55e]/10">
-                    <p className="text-[#22c55e] font-bold text-sm uppercase tracking-widest mb-2">Instrucciones</p>
-                    <p className="text-slate-400 text-sm">
-                      Haga clic en el terminal de asistencia ubicado en la esquina inferior derecha para iniciar el protocolo de captura.
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-4 text-slate-500 text-xs font-mono uppercase tracking-tighter italic">
-                    <span className="animate-pulse text-[#22c55e]">●</span> System status: online / ready_for_test
-                  </div>
-                </div>
-              </div>
+    <div className="min-h-screen bg-[#0c1e35] text-white selection:bg-[#48da40] selection:text-[#0c1e35] font-sans">
+      {/* Navbar Minimalista (Copia Exacta) */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0c1e35]/90 backdrop-blur-md border-b border-white/5">
+        <div className="container mx-auto px-6 h-24 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="text-3xl font-bold tracking-tighter flex items-center gap-1 cursor-pointer">
+              <span className="text-white">3D</span>
+              <span className="text-white/90 font-light italic">realtodigital</span>
             </div>
           </div>
 
-          {/* Footer Note */}
-          <div className="mt-20 py-8 border-t border-slate-800/50 text-slate-600 text-xs font-medium tracking-widest uppercase">
-            <p>Framework: Next.js 16 · Engine: GPT-4o · Backend: Supabase · CRM: Odoo v17</p>
+          <div className="hidden lg:flex items-center gap-6 text-[11px] font-extrabold uppercase tracking-[0.15em] text-white/90">
+            <a href="#" className="hover:text-[#48da40] transition-colors flex items-center gap-1">Consultoría BIM <span className="text-[8px]">▼</span></a>
+            <a href="#" className="text-[#48da40] border-b-2 border-[#48da40] pb-1 flex items-center gap-1">Escaneado 3D <span className="text-[8px]">▼</span></a>
+            <a href="#" className="hover:text-[#48da40] transition-colors">Impresión 3D</a>
+            <a href="#" className="hover:text-[#48da40] transition-colors flex items-center gap-1">Otros servicios <span className="text-[8px]">▼</span></a>
+            <a href="#" className="hover:text-[#48da40] transition-colors">Porfolio</a>
+            <a href="#" className="hover:text-[#48da40] transition-colors">Blog</a>
+            <a href="#" className="hover:text-[#48da40] transition-colors">Quienes Somos</a>
+            <a href="#" className="hover:text-[#48da40] transition-colors">Contacto</a>
+          </div>
+
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition scale-90">
+              <img src="https://upload.wikimedia.org/wikipedia/en/a/a4/Flag_of_the_United_States.svg" className="w-5 h-auto rounded-[1px]" alt="US" />
+            </div>
+            <Search className="w-4 h-4 cursor-pointer hover:text-[#48da40] transition" />
           </div>
         </div>
-      </main>
+      </nav>
+
+      {/* Hero Section (Réplica Exacta) */}
+      <section className="relative min-h-screen flex items-center pt-24 overflow-hidden">
+        {/* Wireframe Mesh Background */}
+        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-[#0c1e35] via-[#102b53] to-[#0c1e35]"></div>
+
+          {/* Rejilla estructural */}
+          <div className="absolute inset-0 opacity-[0.07]"
+            style={{
+              backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
+              backgroundSize: '80px 80px'
+            }}>
+          </div>
+
+          {/* Círculo de luz radial */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-[#48da40]/5 rounded-full blur-[120px]"></div>
+
+          {/* El elemento "Malla de edificio" simulado por CSS */}
+          <div className="absolute bottom-0 right-0 w-[60%] h-[70%] bg-gradient-to-tl from-[#48da40]/10 to-transparent skew-x-[-20deg] opacity-20 transform translate-x-20"></div>
+        </div>
+
+        <div className="container mx-auto px-10 relative z-10">
+          <div className="max-w-4xl">
+            <h1 className="text-7xl md:text-8xl font-black mb-6 leading-[0.95] tracking-tight text-white uppercase italic">
+              Expertos en <br />
+              Escaneado 3D
+            </h1>
+
+            <p className="text-2xl md:text-3xl font-extrabold text-white mb-6 leading-snug drop-shadow-md">
+              Escaneado 3D preciso para transformar tus proyectos, con modelado BIM e impresión 3D que optimizan cada detalle.
+            </p>
+
+            <p className="text-md text-white/70 mb-10 max-w-2xl leading-relaxed italic border-l-2 border-[#48da40]/30 pl-6">
+              Sea cual sea el tamaño de tus proyectos, ofrecemos soluciones técnicas basadas en el escaneado 3D, adaptándonos a las necesidades específicas de cada proyecto.
+            </p>
+
+            <button className="bg-[#48da40] hover:bg-[#3ecb37] text-white px-12 py-5 rounded-[4px] font-black text-sm uppercase tracking-[0.2em] shadow-xl hover:shadow-[#48da40]/20 transition-all transform hover:-translate-y-0.5">
+              SOLICITAR INFORMACIÓN
+            </button>
+          </div>
+        </div>
+
+        {/* Debug UI (Para estética industrial) */}
+        <div className="absolute bottom-12 right-12 z-10 hidden xl:flex flex-col items-end gap-2 opacity-20 pointer-events-none font-mono">
+          <div className="text-[9px] font-bold tracking-[0.5em] uppercase">Status: System_Operational</div>
+          <div className="w-32 h-1 bg-white/10 rounded-full overflow-hidden">
+            <div className="h-full bg-[#48da40] w-3/4 animate-pulse"></div>
+          </div>
+          <div className="text-[8px]">Scan_Buffer: 100% / Latency: 12ms</div>
+        </div>
+      </section>
 
       {/* Chat Widget */}
       <ChatWidget />

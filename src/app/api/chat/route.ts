@@ -55,29 +55,21 @@ export async function POST(req: NextRequest) {
             tenant_id: tenantId
         });
 
-        // 3. Buscar contexto relevante en la base de conocimiento (RAG)
-        // Umbral bajado a 0.4 para mayor receptividad
-        const relevantContext = await searchKnowledge(
-            message,
-            tenantId,
-            { source: 'Real to Digital KB' },
-            0.4,
-            3
-        );
+        // 3. Buscar contexto relevante y obtener historial EN PARALELO
+        const [relevantContext, historyRes] = await Promise.all([
+            searchKnowledge(message, tenantId, { source: 'Real to Digital KB' }, 0.4, 3),
+            supabase.from('messages')
+                .select('role, content')
+                .eq('lead_id', currentLeadId)
+                .order('created_at', { ascending: true })
+                .limit(10)
+        ]);
 
         const contextText = relevantContext.length > 0
-            ? `\n\nCONTEXTO DE LA BASE DE CONOCIMIENTO (Usa esto para responder):\n${relevantContext
-                .map((r: any) => `- ${r.content}`)
-                .join('\n')}`
+            ? `\n\nCONTEXTO:\n${relevantContext.map((r: any) => `- ${r.content}`).join('\n')}`
             : '';
 
-        // 4. Obtener historial de conversación
-        const { data: messageHistory } = await supabase
-            .from('messages')
-            .select('role, content')
-            .eq('lead_id', currentLeadId)
-            .order('created_at', { ascending: true })
-            .limit(20);
+        const messageHistory = historyRes.data || [];
 
         // 5. Construir mensajes para OpenAI
         const chatMessages: any[] = [
@@ -97,8 +89,8 @@ export async function POST(req: NextRequest) {
             messages: chatMessages,
             functions: FUNCTION_SCHEMAS,
             function_call: 'auto',
-            temperature: 0.5,
-            max_tokens: 300,
+            temperature: 0.3,
+            max_tokens: 150,
         });
 
         const assistantMessage = completion.choices[0].message;

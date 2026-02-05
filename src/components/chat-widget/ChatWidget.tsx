@@ -212,14 +212,13 @@ export default function ChatWidget({ tenantId: initialTenantId }: ChatWidgetProp
                                             onChange={(e) => setInputValue(e.target.value)}
                                             onKeyPress={handleKeyPress}
                                             placeholder="Describa su requerimiento técnico..."
-                                            disabled={isLoading}
-                                            className="flex-1 px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#22c55e] focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                                            className="flex-1 px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#22c55e] focus:border-transparent text-sm"
                                             autoFocus
                                         />
                                         <button
                                             onClick={sendMessage}
-                                            disabled={!inputValue.trim() || isLoading}
-                                            className="bg-[#0c1e35] text-white p-2 rounded-lg hover:bg-[#162e4d] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md"
+                                            disabled={!inputValue.trim()}
+                                            className="bg-[#0c1e35] text-white p-2 rounded-lg hover:bg-[#162e4d] transition-all duration-200 shadow-md"
                                         >
                                             <Send className="w-5 h-5 text-[#22c55e]" />
                                         </button>

@@ -27,20 +27,20 @@ export default function ChatBubble({ message }: ChatBubbleProps) {
         >
             {/* Avatar */}
             <div
-                className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center border ${isUser
-                    ? 'bg-[#0c1e35] text-[#22c55e] border-[#22c55e]/30'
-                    : 'bg-white text-slate-700 border-slate-200'
+                className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center border shadow-sm ${isUser
+                    ? 'bg-[#48da40] text-white border-[#3ecb37]'
+                    : 'bg-white text-[#0c1e35] border-slate-200'
                     }`}
             >
-                {isUser ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4 text-[#22c55e]" />}
+                {isUser ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4 text-[#48da40]" />}
             </div>
 
             {/* Bubble */}
-            <div className={`flex flex-col max-w-[75%] ${isUser ? 'items-end' : 'items-start'}`}>
+            <div className={`flex flex-col max-w-[80%] ${isUser ? 'items-end' : 'items-start'}`}>
                 <div
-                    className={`rounded-2xl px-4 py-2 text-sm shadow-sm ${isUser
-                        ? 'bg-[#0c1e35] text-white rounded-tr-sm border border-[#22c55e]/20'
-                        : 'bg-white text-slate-800 border border-slate-200 rounded-tl-sm'
+                    className={`rounded-2xl px-4 py-2.5 text-sm shadow-md ${isUser
+                        ? 'bg-[#48da40] text-black font-medium rounded-tr-sm border border-[#3ecb37]/30'
+                        : 'bg-white text-[#0c1e35] border border-slate-100 rounded-tl-sm'
                         }`}
                 >
                     {isUser ? (
