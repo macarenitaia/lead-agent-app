@@ -17,12 +17,16 @@ class OdooClient {
     private uid: number | null = null;
 
     constructor() {
+        this.init();
+    }
+
+    init() {
         this.url = process.env.ODOO_URL || '';
-        // Odoo URL needs to be the root, not /odoo
         this.url = this.url.replace(/\/odoo$/, '');
         this.db = process.env.ODOO_DB || '';
         this.username = process.env.ODOO_USERNAME || '';
         this.password = process.env.ODOO_PASSWORD || '';
+        this.uid = null; // Reset auth on re-init
     }
 
     /**
