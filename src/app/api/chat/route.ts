@@ -162,10 +162,14 @@ export async function POST(req: NextRequest) {
         await saveAssistantMsg;
 
         return NextResponse.json(responseData);
-    } catch (error) {
-        console.error('Chat API error:', error);
+    } catch (error: any) {
+        console.error('CHAT_API_ERROR_DETAIL:', {
+            message: error.message,
+            stack: error.stack,
+            error
+        });
         return NextResponse.json(
-            { error: 'Internal server error' },
+            { error: 'Internal server error', details: error.message },
             { status: 500 }
         );
     }
