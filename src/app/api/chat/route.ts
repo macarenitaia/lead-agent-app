@@ -223,9 +223,20 @@ async function captureContactInfo(data: any, leadId: string, tenantId: string): 
         if (error) throw error;
 
         // Sincronizar con Odoo si está configurado
+        console.log('DEBUG_ODOO: Verificando configuración...', {
+            isConfigured: odooClient.isConfigured(),
+            url: process.env.ODOO_URL ? 'PRESENT' : 'MISSING',
+            db: process.env.ODOO_DB ? 'PRESENT' : 'MISSING',
+            user: process.env.ODOO_USERNAME ? 'PRESENT' : 'MISSING'
+        });
+
         if (updatedLead && odooClient.isConfigured()) {
             try {
-                // Volvemos a usar await para asegurar que Vercel no mate el proceso antes de terminar
+                console.log('DEBUG_ODOO: Intentando crear lead...', {
+                    name: updatedLead.name,
+                    email: updatedLead.email
+                });
+
                 const odooLeadId = await odooClient.createLead({
                     name: updatedLead.name || 'Lead desde chat',
                     company: updatedLead.company_name,
@@ -240,15 +251,22 @@ Lead Local ID: ${leadId}`,
                 });
 
                 if (odooLeadId) {
+                    console.log('DEBUG_ODOO: Lead creado con éxito ID:', odooLeadId);
                     await supabaseAdmin
                         .from('leads')
                         .update({
                             external_ids: { odoo_id: odooLeadId }
                         })
                         .eq('id', leadId);
+                } else {
+                    console.error('DEBUG_ODOO: Odoo devolvió null (fallo en la creación)');
                 }
-            } catch (odooError) {
-                console.error('Error syncing with Odoo:', odooError);
+            } catch (odooError: any) {
+                console.error('DEBUG_ODOO_ERROR_DETALLE:', {
+                    mensaje: odooError.message,
+                    stack: odooError.stack,
+                    error: odooError
+                });
             }
         }
         return { status: 'success', captured: Object.keys(data) };
