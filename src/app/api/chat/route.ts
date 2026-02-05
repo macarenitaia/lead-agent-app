@@ -209,10 +209,9 @@ async function captureContactInfo(data: any, leadId: string, tenantId: string): 
             .from('leads')
             .update({
                 name: data.name || undefined,
-                company: data.company_name || data.company || undefined,
                 email: data.email || undefined,
                 phone: data.phone || undefined,
-                stage: data.email ? 'contacted' : 'new',
+                status: data.email ? 'contacted' : 'new'
             })
             .eq('id', leadId)
             .select()
