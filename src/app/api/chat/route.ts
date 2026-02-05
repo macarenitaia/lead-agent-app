@@ -209,9 +209,11 @@ async function captureContactInfo(data: any, leadId: string, tenantId: string): 
             .from('leads')
             .update({
                 name: data.name || undefined,
+                company: data.company_name || data.company || undefined,
+                job_title: data.job_title || data.role || undefined,
                 email: data.email || undefined,
                 phone: data.phone || undefined,
-                status: data.email ? 'contacted' : 'new'
+                status: data.email ? 'contacted' : 'new',
             })
             .eq('id', leadId)
             .select()
@@ -225,6 +227,7 @@ async function captureContactInfo(data: any, leadId: string, tenantId: string): 
                 const odooLeadId = await odooClient.createLead({
                     name: updatedLead.name || 'Lead desde chat',
                     company: updatedLead.company,
+                    job_title: updatedLead.job_title,
                     email: updatedLead.email,
                     phone: updatedLead.phone,
                     description: `Lead capturado desde chat web.
