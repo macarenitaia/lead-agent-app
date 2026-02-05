@@ -24,8 +24,13 @@ export default function ChatWidget({ tenantId: initialTenantId }: ChatWidgetProp
     const [isLoading, setIsLoading] = useState(false);
     const [leadId, setLeadId] = useState<string | null>(null);
 
-    // Si no se pasa tenantId por props, buscamos en el ambiente o usamos uno por defecto (Psicofel para compatibilidad)
-    const [tenantId] = useState(initialTenantId || process.env.NEXT_PUBLIC_TENANT_ID || '612d5347-5745-4b4a-b69c-70087e6a7e8b');
+    // Forzar el tenantId de Real to Digital por defecto si no hay ninguno
+    const REAL_TO_DIGITAL_ID = '7c3130fe-fcbd-4f48-9cd2-d6fd85a2e047';
+    const [tenantId] = useState(initialTenantId || process.env.NEXT_PUBLIC_TENANT_ID || REAL_TO_DIGITAL_ID);
+
+    useEffect(() => {
+        console.log('🤖 ChatWidget iniciado con Tenant ID:', tenantId);
+    }, [tenantId]);
     const [visitorId] = useState(() => {
         if (typeof window !== 'undefined') {
             let id = localStorage.getItem('visitor_id');
