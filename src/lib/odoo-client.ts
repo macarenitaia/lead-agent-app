@@ -10,10 +10,10 @@ export interface OdooLeadData {
 }
 
 class OdooClient {
-    private url: string;
-    private db: string;
-    private username: string;
-    private password: string;
+    private url!: string;
+    private db!: string;
+    private username!: string;
+    private password!: string;
     private uid: number | null = null;
 
     constructor() {
