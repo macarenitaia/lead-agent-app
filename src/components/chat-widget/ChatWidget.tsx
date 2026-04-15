@@ -93,10 +93,15 @@ export default function ChatWidget({ tenantId: initialTenantId }: ChatWidgetProp
                 setLeadId(data.leadId);
             }
 
+            // Si la API devuelve error HTTP o falta el mensaje, mostrarlo claramente
+            const content = data.message
+                || (data.error ? `⚠️ ${data.details || data.error}` : null)
+                || '¡Entendido! ¿En qué más puedo ayudarte?';
+
             const assistantMessage: Message = {
                 id: `assistant_${Date.now()}`,
                 role: 'assistant',
-                content: data.message,
+                content,
                 timestamp: new Date(),
             };
 
@@ -112,7 +117,6 @@ export default function ChatWidget({ tenantId: initialTenantId }: ChatWidgetProp
             setMessages((prev) => [...prev, errorMessage]);
         } finally {
             setIsLoading(false);
-            // Devolver el foco al input inmediatamente
             setTimeout(() => inputRef.current?.focus(), 10);
         }
     };
