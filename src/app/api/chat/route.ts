@@ -236,12 +236,12 @@ async function captureContactInfo(data: any, leadId: string, tenantId: string): 
             try {
                 console.log('DEBUG_CHAT_API: Sincronizando directamente con Odoo...');
                 const odooLeadId = await odooClient.createLead({
-                    name: data.name || 'Lead desde chat',
-                    company: data.company_name || data.company,
-                    job_title: data.job_title || data.role,
-                    email: data.email,
-                    phone: data.phone,
-                    description: `Lead capturado desde chat web.\nID Local: ${leadId}\nFecha: ${new Date().toISOString()}`,
+                    name: data.name || 'Nuevo contacto web',
+                    company: data.company_name || data.company || undefined,
+                    job_title: data.job_title || data.role || undefined,
+                    email: data.email || undefined,
+                    phone: data.phone || undefined,
+                    description: `Lead capturado desde chat web.\nID Local: ${leadId}\nNombre: ${data.name || 'Sin nombre'}\nEmpresa: ${data.company_name || data.company || 'Sin empresa'}\nFecha: ${new Date().toISOString()}`,
                 });
 
                 if (odooLeadId) {

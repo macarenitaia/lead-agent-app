@@ -1,10 +1,10 @@
 import xmlrpc from 'xmlrpc';
 
 export interface OdooLeadData {
-    name: string;
+    name: string;        // Nombre de la persona (contacto)
     email?: string;
     phone?: string;
-    company?: string;
+    company?: string;    // Nombre de la empresa (texto libre)
     job_title?: string;
     description?: string;
 }
@@ -105,13 +105,24 @@ class OdooClient {
         }
 
         try {
-            const params = {
-                name: data.name,
-                partner_name: data.company,
-                function: data.job_title,
-                email_from: data.email,
-                phone: data.phone,
-                description: data.description,
+            // Construimos el título de la oportunidad con nombre + empresa si están disponibles
+            const opportunityTitle = data.company
+                ? `${data.name} - ${data.company}`
+                : data.name;
+
+            // IMPORTANTE: En crm.lead de Odoo:
+            //   - 'name'         = TÍTULO de la oportunidad (no el nombre del contacto)
+            //   - 'contact_name' = Nombre de la persona (contacto, sin partner_id)
+            //   - 'partner_name' = Nombre de empresa como texto libre (NO debe resolverse a partner_id)
+            // NO usar 'partner_id' para evitar que Odoo sobreescriba email/teléfono con los del partner
+            const params: Record<string, any> = {
+                name: opportunityTitle,
+                contact_name: data.name,
+                partner_name: data.company || false,
+                function: data.job_title || false,
+                email_from: data.email || false,
+                phone: data.phone || false,
+                description: data.description || false,
                 type: 'opportunity',
             };
             console.log('ODOO_CLIENT: Llamando a execute_kw crm.lead.create con:', JSON.stringify(params));
