@@ -119,6 +119,9 @@ class OdooClient {
                 name: opportunityTitle,
                 contact_name: data.name,
                 partner_name: data.company || false,
+                // partner_id: false → evita que Odoo auto-asigne el partner del usuario
+                // autenticado, lo que sobreescribiría el teléfono y email con los de la empresa
+                partner_id: false,
                 function: data.job_title || false,
                 email_from: data.email || false,
                 phone: data.phone || false,
